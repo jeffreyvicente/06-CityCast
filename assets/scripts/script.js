@@ -1,12 +1,8 @@
-var searchButton = document.querySelector("#search-button");
 
 
 
 
+function searchHistroy(){
+    var cityName = document.getElementById
 
-
-
-searchButton.addEventListener("click", function(){
-
-    console.log("Search button has been clicked!");
-})
+}
