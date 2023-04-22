@@ -6,7 +6,7 @@ var mainTemp;
 var mainWind;
 var mainHumidity;
 
-var currentDate = dayjs().format('MM-DD-YY');
+var currentDate = dayjs().format('2023-04-22');
 $(function(){
     console.log(currentDate);
 
@@ -28,6 +28,13 @@ $(function(){
         console.log("This is the saved description " + savedDesc);
     });
     */
+
+
+    var currentHour =  dayjs('2023-04-15 14:00').hour(); // gets current hourv
+    console.log("This is the current hour " + currentHour);
+
+    var temp = dayjs().isAfter(dayjs("2023-04-22 09:00:00"));
+    console.log (temp);
 
 });
 
@@ -105,7 +112,8 @@ function populateFiveDay(cityName){
     console.log("Coord Values " + cityLat + cityLon);
     var appendedName = cityName + "-5day";
 
-    var forecastAPI = "https://api.openweathermap.org/data/2.5/forecast?lat=33.7459&lon=-117.8262&exclude=houly&appid=" + APIKEY+"&units=imperial";
+    var forecastAPI = "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + 
+    cityLon +  "&exclude=houly&appid=" + APIKEY+"&units=imperial";
     console.log(forecastAPI);
 
     fetch(forecastAPI)
@@ -132,21 +140,32 @@ function getAverageValues(name){
     console.log(temp + " "+ lengths);
     let result = temp.includes("04-22");
     console.log(result);
+    
 
+    
     var tempArrayMax = [];
     var tempArrayMin = [];
     var humidityArray = [];
+    var windArray =[];
+   
+    currentDate = dayjs().format("YYYY-MM-DD");
+    var formatedCurrentDate = dayjs().format("MM-DD-YYYY");
+    for(var x = 0; x < 5; x++){
+    
 
     for ( var i = 0; i < savedData.list.length;i++ ){
-        console.log("This is loop: " + i);
+        //console.log("This is loop: " + i);
         var temp = savedData.list[i].dt_txt;
-        if(temp.includes("04-22")){
+        console.log ("This is the currentDate: " + currentDate);
+        if(temp.includes(currentDate)){
            
             tempArrayMax.push(savedData.list[i].main.temp_max);
             tempArrayMin.push(savedData.list[i].main.temp_min);
             humidityArray.push(savedData.list[i].main.humidity);
+            windArray.push(savedData.list[i].wind.speed);
 
         }
+
     }
 
     console.log(tempArrayMax);
@@ -157,10 +176,33 @@ function getAverageValues(name){
     console.log("This is the sum of the tempMIN "+ actuallMinAverage);
     var averageHimidity = getAverage(humidityArray);
     console.log("This is the sum of the averageHimidity "+ averageHimidity);
-    $("#date-1").find("#cardHighTemp").text("Highs of: "+ Math.trunc(actuallMaxAverage) + " °F");
-    $("#date-1").find("#cardLowTemp").text("Lows of: " + Math.trunc(actuallMinAverage) + " °F");
-    $("#date-1").find("#cardHumidity").text("Humidity: " +Math.trunc(averageHimidity) + "%");
+    var averageWind= getAverage(windArray);
+    console.log("This is the sum of the averageHimidity "+ averageHimidity);
 
+    var appendedValue = "#date-" + x;
+    console.log(appendedValue);
+    //var appendedValue2 = "#head-" + x;
+    //console.log(appendedValue2);
+    $("#head-" + x).text(formatedCurrentDate);
+    //$("#date-1").find("#cardHighTemp").text("Highs of: "+ Math.trunc(actuallMaxAverage) + " °F");
+    $(appendedValue).find("#cardHighTemp").text("Highs of: "+ Math.max(...tempArrayMax) + " °F");
+    $(appendedValue).find("#cardLowTemp").text("Lows of: " + Math.min(...tempArrayMin) + " °F");
+    $(appendedValue).find("#cardHumidity").text("Humidity: " +Math.trunc(averageHimidity) + "%");
+    $(appendedValue).find("#cardWind").text("Wind: " +Math.trunc(averageHimidity) + " mph");
+
+    var tempArrayMax = [];
+    var tempArrayMin = [];
+    var humidityArray = [];
+    var windArray =[];
+
+    var currentDate = dayjs();
+    currentDate = currentDate.add(x + 1, 'day').format("YYYY-MM-DD");
+  
+    console.log("The new current date is " + currentDate);
+
+    var formatedCurrentDate = dayjs();
+    formatedCurrentDate = formatedCurrentDate.add(x + 1, 'day').format("MM-DD-YYYY");
+}
 }
 
 function getAverage(array){
