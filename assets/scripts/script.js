@@ -149,7 +149,7 @@ function getAverageValues(name){
     var windArray =[];
    
     currentDate = dayjs().format("YYYY-MM-DD");
-    var formatedCurrentDate = dayjs().format("MM-DD-YYYY");
+    var formatedCurrentDate = dayjs().format("MM/DD/YYYY");
     for(var x = 0; x < 5; x++){
     
 
@@ -169,7 +169,10 @@ function getAverageValues(name){
     }
 
     console.log(tempArrayMax);
+    console.log(Math.max(...tempArrayMax));
     console.log(tempArrayMin);
+    console.log(Math.max(...tempArrayMax));
+    console.log(Math.min(...tempArrayMin));
     var actuallMaxAverage = getAverage(tempArrayMax);
     console.log("This is the sum of the tempMAX "+ actuallMaxAverage);
     var actuallMinAverage = getAverage(tempArrayMin);
@@ -177,7 +180,7 @@ function getAverageValues(name){
     var averageHimidity = getAverage(humidityArray);
     console.log("This is the sum of the averageHimidity "+ averageHimidity);
     var averageWind= getAverage(windArray);
-    console.log("This is the sum of the averageHimidity "+ averageHimidity);
+    console.log("This is the sum of the average !!!!!!!!!!!!!!!!!!!!!"+ averageWind);
 
     var appendedValue = "#date-" + x;
     console.log(appendedValue);
@@ -188,12 +191,16 @@ function getAverageValues(name){
     $(appendedValue).find("#cardHighTemp").text("Highs of: "+ Math.max(...tempArrayMax) + " °F");
     $(appendedValue).find("#cardLowTemp").text("Lows of: " + Math.min(...tempArrayMin) + " °F");
     $(appendedValue).find("#cardHumidity").text("Humidity: " +Math.trunc(averageHimidity) + "%");
-    $(appendedValue).find("#cardWind").text("Wind: " +Math.trunc(averageHimidity) + " mph");
+    $(appendedValue).find("#cardWind").text("Wind: " +Math.trunc(averageWind) + " mph");
 
     var tempArrayMax = [];
     var tempArrayMin = [];
     var humidityArray = [];
     var windArray =[];
+    actuallMaxAverage = 0;
+    actuallMinAverage = 0;
+    averageHimidity = 0;
+    averageWind = 0;
 
     var currentDate = dayjs();
     currentDate = currentDate.add(x + 1, 'day').format("YYYY-MM-DD");
@@ -201,7 +208,7 @@ function getAverageValues(name){
     console.log("The new current date is " + currentDate);
 
     var formatedCurrentDate = dayjs();
-    formatedCurrentDate = formatedCurrentDate.add(x + 1, 'day').format("MM-DD-YYYY");
+    formatedCurrentDate = formatedCurrentDate.add(x + 1, 'day').format("MM/DD/YYYY");
 }
 }
 
