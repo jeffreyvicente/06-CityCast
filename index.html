@@ -12,6 +12,11 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
     crossorigin="anonymous"
     />
+    <!-- link to the jquary-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+    <!--DayJS-->
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 
     <title>☀️ WeatherHub 🌧️ </title>
 </head>
@@ -27,21 +32,13 @@
         <div class="row">
           <div class="col-sm-12 col-lg-2">
             <h4 class="m-2">Search for a City: </h4>
-<<<<<<< HEAD
             <input type="text" class="form-control m-2" id="inputPassword2" placeholder="City"></input>
-=======
-            <input type="password" class="form-control m-2" id="search-field" placeholder="City"></input>
->>>>>>> 6b0ebd67057882dee5f9366c094a1e37061b3040
           
             <button type="button" id="search-button" class="btn btn-primary m-2 btn-lg btn-block w-100">Search</button>
-            <hr class=" w-100">
+            <hr class=" w-100" id="cityBreak">
 
             <button type="button" class="btn btn-secondary m-2 btn-lg btn-block w-100">Search</button>
-            <button type="button" class="btn btn-secondary m-2 btn-lg btn-block w-100">Search</button>
-            <button type="button" class="btn btn-secondary m-2 btn-lg btn-block w-100">Search</button>
-            <button type="button" class="btn btn-secondary m-2 btn-lg btn-block w-100">Search</button>
-            <button type="button" class="btn btn-secondary m-2 btn-lg btn-block w-100">Search</button>
-            <button type="button" class="btn btn-secondary m-2 btn-lg btn-block w-100">Search</button>
+        
 
     
           </div>
@@ -53,10 +50,10 @@
        
               <!-- Uses a combination of col-* values to make full-size on small devices and half-size on medium or larger devices -->
                 <div class="border m-2 col-12 ">
-                  <h2>City Name</h2>
-                  <p>Temp: </p>
-                  <p>Wind: </p> 
-                  <p>Humidity: </p>
+                  <h2 id="mainCityName">City Name</h2>
+                  <p id="mainTemp">Temp: </p>
+                  <p id="mainWind">Wind: </p> 
+                  <p id="mainHumidity">Humidity: </p>
 
         
                 </div>
@@ -76,10 +73,11 @@
                       <h5 class="card-header">
                         Date #1
                       </h5>
-                      <div class="card-body">
-                        <p>Temp: </p>
-                        <p>Wind: </p> 
-                        <p>Humidity: </p>
+                      <div id="date-1" class="card-body">
+                        <p id="cardHighTemp">Temp: </p>
+                        <p id="cardLowTemp">Temp: </p>
+                        <p id ="cardWind">Wind: </p> 
+                        <p id = "cardHumidity">Humidity: </p>
                        
                       </div>
                     </div>
