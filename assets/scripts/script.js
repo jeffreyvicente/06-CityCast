@@ -162,7 +162,7 @@ function fiveDay (cityName){
     var temp = hardCurrentDate.format('YYYY-MM-DD HH:MM:ss');
    //console.log("This is the value of temp " + temp);
     var plusOneDay = hardCurrentDate.add(24, "hour").format('YYYY-MM-DD');
-    var formatedPlusOneDay= hardCurrentDate.add(24, "hour").format('YYYY-MM-DD HH:MM:ss')
+    var formatedPlusOneDay= hardCurrentDate.add(24, "hour").format('YYYY-MM-DD HH:MM:ss');
     console.log("This is the value of formatedPlus: " + formatedPlusOneDay);
     console.log("This is the value of plus one day " + plusOneDay);
 
@@ -176,50 +176,57 @@ function fiveDay (cityName){
 
     var lowestDiff = Infinity;
     var weatherArrayIndex;
+    for (var x = 0; x < 5; x++){
+     
+        for( var i = 0; i < savedData.list.length ; i++){
 
-    for( var i = 0; i < savedData.list.length ; i++){
+            var arrayDate = (savedData.list[i].dt_txt);
+            //console.log("This is the value of arrayDate "+ arrayDate);
+            //var diffMinute = arrayDate.diff(plusOneDay, 'minute');
+            //var diffMinute = plusOneDay.diff(arrayDate, 'minute');
+            //console.log("This is the value of diffMinute " + diffMinute);
 
-        var arrayDate = (savedData.list[i].dt_txt);
-        //console.log("This is the value of arrayDate "+ arrayDate);
-        //var diffMinute = arrayDate.diff(plusOneDay, 'minute');
-        //var diffMinute = plusOneDay.diff(arrayDate, 'minute');
-        //console.log("This is the value of diffMinute " + diffMinute);
+            if(arrayDate.includes(plusOneDay)){
+                //console.log(plusOneDay);
+                var tempA = dayjs(arrayDate);
+                var tempB = dayjs(formatedPlusOneDay);
 
-        if(arrayDate.includes(plusOneDay)){
-            //console.log(plusOneDay);
-            var tempA = dayjs(arrayDate);
-            var tempB = dayjs(formatedPlusOneDay);
+                //console.log("This is in the if");
+                var diffMinute = tempA.diff(tempB, 'minute');
+                //console.log(diffMinute);
+                if( diffMinute < 90 && diffMinute > -90){
 
-            //console.log("This is in the if");
-            var diffMinute = tempA.diff(tempB, 'minute');
-            //console.log(diffMinute);
-            if( diffMinute < 90 && diffMinute > -90){
+                console.log("This is the index " + i);
+                    weatherArrayIndex = i;
+                    //var windSpeed = savedData.list[weatherArrayIndex].wind.speed
+                    //console.log("This is the value of windSpeed " + windSpeed);
+                    var appendedValue = "#"+tempA.format('MM-DD-YYYY');
+                    //console.log(tempA.format('MM-DD-YYYY') + " " + appendedValue);
+                    //$(appendedValue).find('#cardWind').text(windSpeed);
+                    applyValues(appendedValue,weatherArrayIndex,savedData);
 
-               console.log("This is the index " + i);
-                weatherArrayIndex = i;
-                //var windSpeed = savedData.list[weatherArrayIndex].wind.speed
-                //console.log("This is the value of windSpeed " + windSpeed);
-                var appendedValue = "#"+tempA.format('MM-DD-YYYY');
-                //console.log(tempA.format('MM-DD-YYYY') + " " + appendedValue);
-                //$(appendedValue).find('#cardWind').text(windSpeed);
-                applyValues(appendedValue,weatherArrayIndex,savedData);
-
+                }
+                
             }
-            
         }
+        plusOneDay = dayjs(plusOneDay).add(24, "hour").format('YYYY-MM-DD');
+        formatedPlusOneDay = dayjs(formatedPlusOneDay).add(24, "hour").format('YYYY-MM-DD HH:MM:ss');
     }
 }
 
 function applyValues(appendedValue, arrayData, savedData){
-
+    var weatherIcon = savedData.list[arrayData].weather[0].icon;
     var windSpeed = savedData.list[arrayData].wind.speed;
     var humidity = savedData.list[arrayData].main.humidity;
     var futureTemp = savedData.list[arrayData].main.temp;
     //console.log("This is the value in apply Value speed: " + windSpeed)
     //console.log("This is the value in apply Value humidity: " + humidity);
     //console.log("This is the value in apply Value temp: " + futureTemp);
+     console.log("This is the value in apply Value Icon: " + weatherIcon);
 
-    $(appendedValue).find('#cardWind').text("Wind: " +windSpeed + " mph");;
+    $(appendedValue).find('#weatherIcon').attr("src", );
+
+    $(appendedValue).find('#cardWind').text("Wind: " +windSpeed + " mph");
     $(appendedValue).find("#cardHighTemp").text("Currently: "+ futureTemp + " °F");
     $(appendedValue).find("#cardHumidity").text("Humidity: " +humidity + "%");
 
