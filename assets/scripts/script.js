@@ -40,8 +40,35 @@ $(function(){
     //console.log (temp);
 
     dateID();
+    //var cityHistoryArray = JSON.parse(localStorage.getItem('cityHistoryArray'));
+    //console.log(cityHistoryArray);
+    
+  
+
+   
+
+       $(document).on("click", ".cityButton", function() {
+
+        var cityName = $(this).attr("id");
+        console.log(cityName);
+        populateMainHeader(cityName);
+      });
+
+
+
+      var buttonDataArray = JSON.parse(localStorage.getItem("cityButtons")) || [];
+      for (var i = 0; i < buttonDataArray.length; i++) {
+        var buttonData = buttonDataArray[i];
+        createCityButton(buttonData.text);
+        
+    }
 
 });
+
+
+
+
+
 
 function searchHistroy(){
     console.log("The search history function is now running");
@@ -55,7 +82,10 @@ function searchHistroy(){
 
     console.log("This is the city name: " + cityName);
 
-    var $existingButton = $("#search-button");
+
+    createCityButton(cityName)
+
+   /* var $existingButton = $("#search-button");
   
     var $newButton = $existingButton.clone();
    
@@ -64,16 +94,51 @@ function searchHistroy(){
     $newButton.addClass("cityButton")
 
     $("#cityBreak").after($newButton);
+    */
+    
+    /*cityHistoryArray.push(cityName);
+    console.log(cityHistoryArray);
+    localStorage.setItem("cityhistory", cityHistoryArray)
 
+
+*/
    
     populateMainHeader(cityName);
    
-
 }
+
+function createCityButton(cityName) {
+    var $existingButton = $("#search-button");
+    var $newButton = $existingButton.clone();
+    $newButton.text(cityName);
+    $newButton.attr("id", cityName);
+    $newButton.removeClass("btn-primary")
+    $newButton.addClass("cityButton btn-secondary");
+    $("#cityBreak").after($newButton);
+
+
+    var buttonDataArray = JSON.parse(localStorage.getItem("cityButtons")) || [];
+   
+    var buttonData = {
+        id: cityName,
+        text: cityName,
+        class: "cityButton"
+      };
+      //var buttonJson = JSON.stringify(buttonData);
+      //localStorage.setItem("history", buttonJson);
+
+      buttonDataArray.push(buttonData);
+      localStorage.setItem("cityButtons", JSON.stringify(buttonDataArray));
+  
+      
+  
+    }
+ 
 
 
 
 function populateMainHeader(cityName){
+    
 
     var APICALL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKEY +"&units=imperial";
     
@@ -224,7 +289,7 @@ function applyValues(appendedValue, arrayData, savedData){
     //console.log("This is the value in apply Value temp: " + futureTemp);
      console.log("This is the value in apply Value Icon: " + weatherIcon);
 
-    $(appendedValue).find('#weatherIcon').attr("src", );
+    $(appendedValue).find('#weatherIcon').attr("src", "./assets/images/" + weatherIcon +"@2x.png" );
 
     $(appendedValue).find('#cardWind').text("Wind: " +windSpeed + " mph");
     $(appendedValue).find("#cardHighTemp").text("Currently: "+ futureTemp + " °F");
