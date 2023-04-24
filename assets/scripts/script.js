@@ -6,9 +6,10 @@ var mainTemp;
 var mainWind;
 var mainHumidity;
 
-var currentDate = dayjs().format('2023-04-22');
+var currentDate = dayjs().format("YYYY-MM-DD");
+var dataArray = [];
 $(function(){
-    console.log(currentDate);
+   
 
     /*
     var APICALL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKEY;
@@ -29,12 +30,16 @@ $(function(){
     });
     */
 
+    
 
+    //console.log(currentDate);
     var currentHour =  dayjs('2023-04-15 14:00').hour(); // gets current hourv
-    console.log("This is the current hour " + currentHour);
+    //console.log("This is the current hour " + currentHour);
 
     var temp = dayjs().isAfter(dayjs("2023-04-22 09:00:00"));
-    console.log (temp);
+    //console.log (temp);
+
+    dateID();
 
 });
 
@@ -68,43 +73,179 @@ function searchHistroy(){
 
 
 
-async function populateMainHeader(cityName){
+function populateMainHeader(cityName){
 
     var APICALL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKEY +"&units=imperial";
     
     fetch(APICALL)
         .then(function(response){
-            console.log(response);
+           // console.log(response);
             
             return response.json();
 
         })
         .then(function(data){
-            console.log(data);
+           // console.log(data);
             localStorage.setItem(cityName, JSON.stringify(data));
             
             $("#mainCityName").text(cityName);
             mainTemp = data.main.temp;
-            console.log("Temp: " + mainTemp);
+            //console.log("Temp: " + mainTemp);
             $("#mainTemp").text("Current Tempature: " + mainTemp + " F");
 
             mainWind=data.wind.speed;
-            console.log("Wind Speed" + mainWind);
+            //console.log("Wind Speed: " + mainWind);
             $("#mainWind").text("Current Wind Speed: " + mainWind + " mph");
 
             mainHumidity = data.main.humidity; 
-            console.log("Current Humidity: " + mainHumidity);
+           // console.log("Current Humidity: " + mainHumidity);
             $("#mainHumidity").text("Current Humidity: " + mainHumidity + "%");
 
-            
+            dataArray = [
+                {
+                    temp: mainTemp,
+                    wind: mainWind,
+                    humidity: mainHumidity,
+                    lat: data.coord.lat,
+                    lon: data.coord.lon,
+                    time : data.dt
+                }
+            ];
+            localStorage.setItem(cityName, JSON.stringify(dataArray));   
         });
 
-        setTimeout(() => { populateFiveDay(cityName);}, 500);
+        //newfun(cityName);
+        setTimeout(() => {  newfun(cityName);}, 400);
+
+        //setTimeout(() => { populateFiveDay(cityName);}, 500);
         
 }
 
+function newfun(cityName){
+    console.log("--------------------------------------------------");
+   // console.log("Running newfun function");
+
+    var savedData = JSON.parse(localStorage.getItem(cityName));
+    //console.log("This is newFun running with the value of savedData");
+   // console.log(savedData);
+   // console.log("This is the lon value: " + savedData[0].lon);
+   // console.log("This is the lat value: " + savedData[0].lat);
+    var cityLat = savedData[0].lat;
+    var cityLon = savedData[0].lon;
+
+    var fiveForecastAPI = "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + 
+    cityLon +  "&exclude=houly&appid=" + APIKEY + "&units=imperial";
+    
+   // console.log("This the fiveForecastAPI");
+   // console.log(fiveForecastAPI);
+
+    fetch(fiveForecastAPI)
+    .then(function(response){
+       // console.log(response);
+        
+        return response.json();
+
+    }) .then(function(data){
+        //console.log(data);
+        
+        localStorage.setItem(cityName+"-5day", JSON.stringify(data));
+    });
+
+    setTimeout(() => {  fiveDay(cityName);}, 400);
+}
+
+//var hardCurrentDate = dayjs('2023-04-26 18:00:00');
+var hardCurrentDate = dayjs();
+
+function fiveDay (cityName){
+    console.log("--------------------------------------------------");
+    var temp = hardCurrentDate.format('YYYY-MM-DD HH:MM:ss');
+   //console.log("This is the value of temp " + temp);
+    var plusOneDay = hardCurrentDate.add(24, "hour").format('YYYY-MM-DD');
+    var formatedPlusOneDay= hardCurrentDate.add(24, "hour").format('YYYY-MM-DD HH:MM:ss')
+    console.log("This is the value of formatedPlus: " + formatedPlusOneDay);
+    console.log("This is the value of plus one day " + plusOneDay);
+
+    var savedData = JSON.parse(localStorage.getItem(cityName+"-5day"));
+    //console.log(savedData);
+    //tempa = dayjs('2023-04-24 17:10:00');
+    //console.log(tempa);
+
+    //var difference = tempa.diff(temp,'minute');
+    //console.log("The difference is " + difference);
+
+    var lowestDiff = Infinity;
+    var weatherArrayIndex;
+
+    for( var i = 0; i < savedData.list.length ; i++){
+
+        var arrayDate = (savedData.list[i].dt_txt);
+        //console.log("This is the value of arrayDate "+ arrayDate);
+        //var diffMinute = arrayDate.diff(plusOneDay, 'minute');
+        //var diffMinute = plusOneDay.diff(arrayDate, 'minute');
+        //console.log("This is the value of diffMinute " + diffMinute);
+
+        if(arrayDate.includes(plusOneDay)){
+            //console.log(plusOneDay);
+            var tempA = dayjs(arrayDate);
+            var tempB = dayjs(formatedPlusOneDay);
+
+            //console.log("This is in the if");
+            var diffMinute = tempA.diff(tempB, 'minute');
+            //console.log(diffMinute);
+            if( diffMinute < 90 && diffMinute > -90){
+
+               console.log("This is the index " + i);
+                weatherArrayIndex = i;
+                //var windSpeed = savedData.list[weatherArrayIndex].wind.speed
+                //console.log("This is the value of windSpeed " + windSpeed);
+                var appendedValue = "#"+tempA.format('MM-DD-YYYY');
+                //console.log(tempA.format('MM-DD-YYYY') + " " + appendedValue);
+                //$(appendedValue).find('#cardWind').text(windSpeed);
+                applyValues(appendedValue,weatherArrayIndex,savedData);
+
+            }
+            
+        }
+    }
+}
+
+function applyValues(appendedValue, arrayData, savedData){
+
+    var windSpeed = savedData.list[arrayData].wind.speed;
+    var humidity = savedData.list[arrayData].main.humidity;
+    var futureTemp = savedData.list[arrayData].main.temp;
+    //console.log("This is the value in apply Value speed: " + windSpeed)
+    //console.log("This is the value in apply Value humidity: " + humidity);
+    //console.log("This is the value in apply Value temp: " + futureTemp);
+
+    $(appendedValue).find('#cardWind').text("Wind: " +windSpeed + " mph");;
+    $(appendedValue).find("#cardHighTemp").text("Currently: "+ futureTemp + " °F");
+    $(appendedValue).find("#cardHumidity").text("Humidity: " +humidity + "%");
+
+
+}
+
+
+
+function dateID(){
+
+   
+    for(var i = 0; i < 5; i++){
+        var formatedDateID = dayjs().add(i + 1, "day").format('MM-DD-YYYY');
+        $(".card-" + i).attr("id", formatedDateID);
+        $("#head-" + i).text(formatedDateID);
+    }
+}
+
+
+
+
+/*
+
 function populateFiveDay(cityName){
 
+    console.log("--------------------------------------------------");
     var savedData = JSON.parse(localStorage.getItem(cityName));
     console.log(savedData);
     var cityLat = savedData.coord.lat;
@@ -132,13 +273,14 @@ function populateFiveDay(cityName){
 
 }
 
+
 function getAverageValues(name){
     var savedData = JSON.parse(localStorage.getItem(name));
     var temp = savedData.list[0].dt_txt;
     var lengths = savedData.list.length;
 
     console.log(temp + " "+ lengths);
-    let result = temp.includes("04-22");
+    let result = temp.includes("04-23");
     console.log(result);
     
 
@@ -148,8 +290,12 @@ function getAverageValues(name){
     var humidityArray = [];
     var windArray =[];
    
-    currentDate = dayjs().format("YYYY-MM-DD");
-    var formatedCurrentDate = dayjs().format("MM/DD/YYYY");
+    var currentDate1 = dayjs();
+    currentDate1 = currentDate1.format("YYYY-MM-DD");
+    console.log("This is the currentDate #1 " + currentDate1);
+
+    //var currentDate = dayjs().format("YYYY-MM-DD");
+    //var formatedCurrentDate = dayjs().format("MM/DD/YYYY");
     for(var x = 0; x < 5; x++){
     
 
@@ -229,7 +375,7 @@ function getAverage(array){
 
 }
 
-
+*/
 
 $("#search-button").click(function(){
     searchHistroy();
