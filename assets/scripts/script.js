@@ -93,13 +93,21 @@ function searchHistroy(){
    
 }
 
+//Creates the buttons under the search bar after searching for the weather of the city. 
 function createCityButton(cityName) {
+    //gets the atributes of the search button
     var $existingButton = $("#search-button");
+    //clones the search button.
     var $newButton = $existingButton.clone();
+    //sets the button text to the city name
     $newButton.text(cityName);
+    //sets the id of the button to the city name
     $newButton.attr("id", cityName);
+    //changes the jquary from primary to secondary
     $newButton.removeClass("btn-primary")
+    //adds the citybutton class 
     $newButton.addClass("cityButton btn-secondary");
+    //adds the button after the breakline. 
     $("#cityBreak").after($newButton);
 
 
