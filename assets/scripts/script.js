@@ -1,12 +1,17 @@
+//Open Weather API KEY
 var APIKEY = "8c1158ac1ae5b174648a81890c6e113f";
-var city = "Tustin"
+// mainTemp object declaration 
 var mainTemp;
+//mainWind object delaration
 var mainWind;
+//mainHumidity object delaration
 var mainHumidity;
 
+//DayJS variables formating the date for the application
 var currentDate = dayjs().format("YYYY-MM-DD");
 var hardCurrentDate = dayjs();
 
+//Function running when the page is loaded. 
 $(function(){
    
     /*
@@ -17,45 +22,61 @@ $(function(){
     var temp = dayjs().isAfter(dayjs("2023-04-22 09:00:00"));
     //console.log (temp);
     */
+    //Runs the dateID function to set the 5 day dates
     dateID();
+    //Grabs the search history and creates button.
     parseHistory();
     
+    //Button listener to listen to newly created city
     $(document).on("click", ".cityButton", function() {
 
+        //grabs the button id which is set to the city name
         var cityName = $(this).attr("id");
-        console.log(cityName);
+        //console.log(cityName);
+        //Calls the function to populate the main header and grab the 5 day.
         populateMainHeader(cityName);
       });
 
 });
 
+//Button listener to listen when the search button is clicked. 
 $("#search-button").click(function(){
+    //Calls the search history function to run
     searchHistroy();
 });
 
-
+//Parses the search history when the page is reloaded. 
 function parseHistory(){
+    //gets the city button array that holds the city history and declares them as buttonDataArray
+    //If array does not exist create the array. 
     var buttonDataArray = JSON.parse(localStorage.getItem("cityButtons")) || [];
+    //Runs the createCityButton for each city in the array
     for (var i = 0; i < buttonDataArray.length; i++) {
       var buttonData = buttonDataArray[i];
       createCityButton(buttonData.text);
     }
 }
 
+//Function that 5 day headers dates
 function dateID(){
-
+    //Four loop to grab the dates of the next 5 days
     for(var i = 0; i < 5; i++){
+        //Adds 24 hours to the date to generate the 5 day
         var formatedDateID = dayjs().add(i + 1, "day").format('MM-DD-YYYY');
+        //Sets the card ID
         $(".card-" + i).attr("id", formatedDateID);
+        //Sets the text header 
         $("#head-" + i).text(formatedDateID);
     }
 }
 
-
+// 
 function searchHistroy(){
     //console.log("The search history function is now running");
+    //Grabs the text enter in the search bar and assigns it to cityName
     var cityName = $("#inputPassword2").val();
 
+    //Checks if the array is empty, prompts the user to enter a city if none is entered. 
     if (!cityName.length){
         console.log("City Name is empty");
         $("#inputPassword2").attr("placeholder", "Please enter a city");
@@ -64,8 +85,10 @@ function searchHistroy(){
 
     //console.log("This is the city name: " + cityName);
 
+    //Adds the city to history and on the page
     createCityButton(cityName)
    
+    //Call the function to populate the current weather section
     populateMainHeader(cityName);
    
 }
@@ -79,20 +102,6 @@ function createCityButton(cityName) {
     $newButton.addClass("cityButton btn-secondary");
     $("#cityBreak").after($newButton);
 
-    /*
-    var buttonDataArray = JSON.parse(localStorage.getItem("cityButtons")) || [];
-   
-    var buttonData = {
-        id: cityName,
-        text: cityName,
-        class: "cityButton"
-      };
-     
-      buttonDataArray.push(buttonData);
-
-      localStorage.setItem("cityButtons", JSON.stringify(buttonDataArray));
-  
-    */  
 
     var buttonDataArray = JSON.parse(localStorage.getItem("cityButtons")) || [];
 
