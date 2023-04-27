@@ -11,7 +11,6 @@ The Travel Weather App is a web application that allows travelers to view the we
 - [Installation](#installation)
 - [User Story](#user-story)
 - [Acceptance Criteria](#acceptance-criteria)
-- [Mock-up](#mock-up)
 - [Preview](#preview)
 - [Features](#features)
 - [Technology Used](#technologies-used)
