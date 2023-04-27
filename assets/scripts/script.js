@@ -198,7 +198,7 @@ function populateMainHeader(cityName){
             });
 
             //calls the newfun function. Sets a delay of 400ms due to api response. 
-        setTimeout(() => {  newfun(cityName);}, 500);   
+        setTimeout(() => {  newfun(cityName);}, 900);   
 }
 
 
@@ -232,7 +232,7 @@ function newfun(cityName){
         console.error(error.message);
     });
 
-    setTimeout(() => {  fiveDay(cityName);}, 500);
+    setTimeout(() => {  fiveDay(cityName);}, 900);
 }
 
 

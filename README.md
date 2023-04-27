@@ -46,15 +46,11 @@ WHEN I click on a city in the search history
 THEN I am again presented with current and future conditions for that city
 ```
 
-## Mock-up
-
-![alt text](/assets/images/05-third-party-apis-homework-demo.gif)
-
 ## Preview
 
-View live preview hosted on [GitHub Pages](https://jeffreyvicente.github.io/05-TaskMaster/)
+View live preview hosted on [GitHub Pages](https://jeffreyvicente.github.io/06-WeatherHub/)
 
-![alt text](/assets/images/Work%20Day%20Scheduler.gif)
+![alt text](/assets/images/WeatherHubPreview.gif)
 
 
 ## Features
