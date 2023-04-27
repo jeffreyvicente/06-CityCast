@@ -111,30 +111,37 @@ function createCityButton(cityName) {
     $("#cityBreak").after($newButton);
 
 
+    //Calls the cityButtons from local storage, if the object does not exist it will create it. 
     var buttonDataArray = JSON.parse(localStorage.getItem("cityButtons")) || [];
 
+    //Array object created for holding the data 
     var buttonData = {
         id: cityName,
         text: cityName,
         class: "cityButton"
     };
 
+    //Checks if there is a duplicate in the history. If so it will not store the data. 
     if (!buttonDataArray.find(function(item) { 
         return item.id === buttonData.id 
     })) {
-    buttonDataArray.push(buttonData);
-    localStorage.setItem("cityButtons", JSON.stringify(buttonDataArray));
+        //addes the data to the array
+        buttonDataArray.push(buttonData);
+        //saves the data to local storage. 
+        localStorage.setItem("cityButtons", JSON.stringify(buttonDataArray));
     }
  }
  
-
+//will get the weather data and display it on the main header area
 function populateMainHeader(cityName){
     
+    //API link that construct the url
     var APICALL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKEY +"&units=imperial";
     
+    //Calls the openweather API for the current day. 
     fetch(APICALL)
         .then(function(response){
-           // console.log(response);
+         
            if(response.status === 404){
             alert("Invalid City. Please try again!");        
            }
@@ -142,25 +149,37 @@ function populateMainHeader(cityName){
 
         })
         .then(function(data){
-           // console.log(data);
+           console.log(data);
+           //sets the city day as the key and the string in local storage. 
             localStorage.setItem(cityName, JSON.stringify(data));
             
+            //Sets the name of the header to the city name
             $("#mainCityName").text(cityName);
+
+            //sets the temp to the main header
             mainTemp = data.main.temp;
             //console.log("Temp: " + mainTemp);
             $("#mainTemp").text("Current Tempature: " + mainTemp + " F");
 
+            //sets the wind to the main header
             mainWind=data.wind.speed;
             //console.log("Wind Speed: " + mainWind);
             $("#mainWind").text("Current Wind Speed: " + mainWind + " mph");
 
+            //sets the Humidity to the main header
             mainHumidity = data.main.humidity; 
            // console.log("Current Humidity: " + mainHumidity);
             $("#mainHumidity").text("Current Humidity: " + mainHumidity + "%");
 
-            //$(mainWeatherIcon).find('#weatherIcon').attr("src", "./assets/images/" + weatherIcon +"@2x.png" );
-            $(mainWeatherIcon).attr("src", "./assets/images/04d@2x.png" );
+            var mainWeatherIcon = data.weather[0].icon;
+            console.log("This is the value of mainWeatherIcon: " + mainWeatherIcon); 
 
+            //gets the weather icon from the ID the API returns
+            //$(mainWeatherIcon).find('#weatherIcon').attr("src", "./assets/images/" + weatherIcon +"@2x.png" );
+            $("#mainWeatherIcon").attr("src", "./assets/images/" + mainWeatherIcon + "@2x.png" );
+       
+
+            //Sets the data to the data array and saves it local storage
             dataArray = [
                 {
                     temp: mainTemp,
@@ -177,7 +196,9 @@ function populateMainHeader(cityName){
             // Handle the error if the response is a 404
             console.error(error.message);
             });
-        setTimeout(() => {  newfun(cityName);}, 400);   
+
+            //calls the newfun function. Sets a delay of 400ms due to api response. 
+        setTimeout(() => {  newfun(cityName);}, 500);   
 }
 
 
@@ -185,20 +206,16 @@ function newfun(cityName){
     console.log("--------------------------------------------------");
     // console.log("Running newfun function");
 
+    //Grabs the lon and lat from local storage from the function before. 
     var savedData = JSON.parse(localStorage.getItem(cityName));
-    //console.log("This is newFun running with the value of savedData");
-    // console.log(savedData);
-    // console.log("This is the lon value: " + savedData[0].lon);
-    // console.log("This is the lat value: " + savedData[0].lat);
     var cityLat = savedData[0].lat;
     var cityLon = savedData[0].lon;
 
+    // API Call containing the lon and lat. Will return the 5 day data. 
     var fiveForecastAPI = "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + 
     cityLon +  "&exclude=houly&appid=" + APIKEY + "&units=imperial";
     
-    // console.log("This the fiveForecastAPI");
-    // console.log(fiveForecastAPI);
-
+    //fetches the 5 day weather data fom open weather
     fetch(fiveForecastAPI)
     .then(function(response){
        // console.log(response);
@@ -207,7 +224,7 @@ function newfun(cityName){
 
     }) .then(function(data){
         //console.log(data);
-        
+        //stores the data to local storage
         localStorage.setItem(cityName+"-5day", JSON.stringify(data));
     })
     .catch(function(error) {
@@ -215,47 +232,43 @@ function newfun(cityName){
         console.error(error.message);
     });
 
-    setTimeout(() => {  fiveDay(cityName);}, 400);
+    setTimeout(() => {  fiveDay(cityName);}, 500);
 }
 
 
 function fiveDay (cityName){
     console.log("--------------------------------------------------");
-    var temp = hardCurrentDate.format('YYYY-MM-DD HH:MM:ss');
-   //console.log("This is the value of temp " + temp);
+ 
+   //different formats of day data 
     var plusOneDay = hardCurrentDate.add(24, "hour").format('YYYY-MM-DD');
     var formatedPlusOneDay= hardCurrentDate.add(24, "hour").format('YYYY-MM-DD HH:MM:ss');
     console.log("This is the value of formatedPlus: " + formatedPlusOneDay);
     console.log("This is the value of plus one day " + plusOneDay);
 
+    //gets the 5day data in local storage
     var savedData = JSON.parse(localStorage.getItem(cityName+"-5day"));
-    //console.log(savedData);
-    //tempa = dayjs('2023-04-24 17:10:00');
-    //console.log(tempa);
 
-    //var difference = tempa.diff(temp,'minute');
-    //console.log("The difference is " + difference);
-
-    var lowestDiff = Infinity;
+    //declares the weather array index as a global variable. 
     var weatherArrayIndex;
+    //populates the 5 day data in the cards. 
     for (var x = 0; x < 5; x++){
-     
+        
+        //iterates though the data returned from the API. 
         for( var i = 0; i < savedData.list.length ; i++){
-
+            //grabs the date in the array
             var arrayDate = (savedData.list[i].dt_txt);
-            //console.log("This is the value of arrayDate "+ arrayDate);
-            //var diffMinute = arrayDate.diff(plusOneDay, 'minute');
-            //var diffMinute = plusOneDay.diff(arrayDate, 'minute');
-            //console.log("This is the value of diffMinute " + diffMinute);
-
+            
+            //checks if the date matches the current date that needs to be populated. 
             if(arrayDate.includes(plusOneDay)){
-                //console.log(plusOneDay);
+                //creates dayjs objects
+
                 var tempA = dayjs(arrayDate);
                 var tempB = dayjs(formatedPlusOneDay);
 
-                //console.log("This is in the if");
+                //grabs the difference between the current day and time
                 var diffMinute = tempA.diff(tempB, 'minute');
                 //console.log(diffMinute);
+                //checks if the data is current
                 if( diffMinute < 90 && diffMinute > -90){
 
                 console.log("This is the index " + i);
@@ -265,29 +278,33 @@ function fiveDay (cityName){
                     var appendedValue = "#"+tempA.format('MM-DD-YYYY');
                     //console.log(tempA.format('MM-DD-YYYY') + " " + appendedValue);
                     //$(appendedValue).find('#cardWind').text(windSpeed);
+                    //calls the apply value function. 
                     applyValues(appendedValue,weatherArrayIndex,savedData);
 
                 }
-                
             }
         }
+        //iterates the day counter to another day. 
         plusOneDay = dayjs(plusOneDay).add(24, "hour").format('YYYY-MM-DD');
         formatedPlusOneDay = dayjs(formatedPlusOneDay).add(24, "hour").format('YYYY-MM-DD HH:MM:ss');
     }
 }
 
+//Function to apply all the values to the 5 day cards 
 function applyValues(appendedValue, arrayData, savedData){
+    //gets the weather icon code
     var weatherIcon = savedData.list[arrayData].weather[0].icon;
+    //gets the windspeed from the array
     var windSpeed = savedData.list[arrayData].wind.speed;
+    //gets the saved humidity from the array
     var humidity = savedData.list[arrayData].main.humidity;
+    //gets the saved temp from the array
     var futureTemp = savedData.list[arrayData].main.temp;
-    //console.log("This is the value in apply Value speed: " + windSpeed)
-    //console.log("This is the value in apply Value humidity: " + humidity);
-    //console.log("This is the value in apply Value temp: " + futureTemp);
-     console.log("This is the value in apply Value Icon: " + weatherIcon);
 
+    console.log("This is the value in apply Value Icon: " + weatherIcon);
+    //Sets the icon in the card
     $(appendedValue).find('#weatherIcon').attr("src", "./assets/images/" + weatherIcon +"@2x.png" );
-
+    //Sets the wind, temp and humidity in the 5 day card. 
     $(appendedValue).find('#cardWind').text("Wind: " +windSpeed + " mph");
     $(appendedValue).find("#cardHighTemp").text("Currently: "+ futureTemp + " °F");
     $(appendedValue).find("#cardHumidity").text("Humidity: " +humidity + "%");
