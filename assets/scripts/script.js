@@ -8,7 +8,7 @@ var mainWind;
 var mainHumidity;
 
 //DayJS variables formating the date for the application
-var currentDate = dayjs().format("YYYY-MM-DD");
+var currentDate = dayjs().format("MM-DD-YYYY");
 var hardCurrentDate = dayjs();
 
 //Function running when the page is loaded. 
@@ -154,7 +154,7 @@ function populateMainHeader(cityName){
             localStorage.setItem(cityName, JSON.stringify(data));
             
             //Sets the name of the header to the city name
-            $("#mainCityName").text(cityName);
+            $("#mainCityName").text(cityName + " " + currentDate);
 
             //sets the temp to the main header
             mainTemp = data.main.temp;
